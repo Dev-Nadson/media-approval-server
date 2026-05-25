@@ -12,8 +12,6 @@ import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { IdParamDto } from '@/common/dtos/id-param.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 
-//Tipar tudo com os DTOs
-
 @Controller('admins')
 export class AdminsController {
     constructor(private readonly adminsService: AdminsService) { }
@@ -24,8 +22,8 @@ export class AdminsController {
     }
 
     @Get(':id')
-    getAdmin(@Param('id') data: IdParamDto) {
-        return this.adminsService.getAdmin(data);
+    getAdmin(@Param('id') id: IdParamDto) {
+        return this.adminsService.getAdmin(id);
     }
 
     @Post()
@@ -34,7 +32,10 @@ export class AdminsController {
     }
 
     @Put(':id')
-    updateAdmin(@Param('id') id: IdParamDto, @Body() data: UpdateAdminDto) {
+    updateAdmin(
+        @Param('id') id: IdParamDto,
+        @Body() data: UpdateAdminDto
+    ) {
         return this.adminsService.updateAdmin(id, data);
     }
 
