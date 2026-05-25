@@ -1,4 +1,4 @@
-import { env } from "@/libs/env.config";
+import { env } from "@/common/env.config";
 import type { Knex } from "knex";
 
 import * as dotenv from 'dotenv';

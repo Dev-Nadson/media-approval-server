@@ -1,5 +1,5 @@
 import { KnexService } from '@/database/knex.service';
-import { UtilsService } from '@/libs/utils';
+import { UtilsService } from '@/common/utils';
 import { Injectable } from '@nestjs/common';
 import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
