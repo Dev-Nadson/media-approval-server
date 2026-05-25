@@ -1,5 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+} from '@nestjs/common';
 import { AdminsService } from './admins.service';
+import { UpdateAdminDto } from './dtos/update-admin.dto';
+import { IdParamDto } from '@/common/dtos/id-param.dto';
+import { CreateAdminDto } from './dtos/create-admin.dto';
 
 //Tipar tudo com os DTOs
 
@@ -13,22 +24,22 @@ export class AdminsController {
     }
 
     @Get(':id')
-    getAdmin(@Param('id') id: string) {
-        return this.adminsService.getAdmin(id);
+    getAdmin(@Param('id') data: IdParamDto) {
+        return this.adminsService.getAdmin(data);
     }
 
     @Post()
-    createAdmin(@Body() data: any) {
+    createAdmin(@Body() data: CreateAdminDto) {
         return this.adminsService.createAdmin(data);
     }
 
     @Put(':id')
-    updateAdmin(@Param('id') id: string, @Body() data: any) {
+    updateAdmin(@Param('id') id: IdParamDto, @Body() data: UpdateAdminDto) {
         return this.adminsService.updateAdmin(id, data);
     }
 
     @Delete(':id')
-    deleteAdmin(@Param('id') id: string) {
+    deleteAdmin(@Param('id') id: IdParamDto) {
         return this.adminsService.deleteAdmin(id);
     }
 }

@@ -5,13 +5,13 @@ import { env } from '@/libs/env.config';
 
 @Injectable()
 export class KnexService implements OnModuleDestroy {
-    public readonly conn: Knex;
+  public readonly conn: Knex;
 
-    constructor() {
-        this.conn = knex(config[env.NODE_ENV]);
-    }
+  constructor() {
+    this.conn = knex(config[env.NODE_ENV]);
+  }
 
-    async onModuleDestroy() {
-        await this.conn.destroy();
-    }
+  async onModuleDestroy() {
+    await this.conn.destroy();
+  }
 }

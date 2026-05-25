@@ -5,12 +5,8 @@ import { UtilsService } from '@/libs/utils';
 import { KnexService } from '@/database/knex.service';
 
 @Module({
-    imports: [],
-    controllers: [AdminsController],
-    providers: [
-        AdminsService,
-        UtilsService,
-        KnexService
-    ],
+  imports: [],
+  controllers: [AdminsController],
+  providers: [AdminsService, UtilsService, KnexService],
 })
-export class AdminsModule { }
+export class AdminsModule {}

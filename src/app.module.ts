@@ -5,11 +5,8 @@ import { SessionsModule } from './sessions/sessions.module';
 import { AdminsModule } from './admins/admins.module';
 
 @Module({
-  imports: [
-    AdminsModule,
-    SessionsModule,
-  ],
+  imports: [AdminsModule, SessionsModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
