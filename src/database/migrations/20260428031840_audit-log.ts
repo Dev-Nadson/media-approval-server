@@ -17,6 +17,12 @@ export async function up(knex: Knex): Promise<void> {
     table.string('action').notNullable();
     table.json('metadata');
     table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
+
+    table.index('id');
+    table.index('session_id');
+    table.index('media_id');
+    table.index(['session_id', 'created_at']);
+    table.index(['media_id', 'created_at']);
   });
 }
 

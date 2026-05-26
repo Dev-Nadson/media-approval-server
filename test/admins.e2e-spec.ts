@@ -37,6 +37,8 @@ describe('AdminsController (e2e)', () => {
             .post('/api/admins')
             .send({
                 name: 'John Doe',
+                role: 1,
+                situation: 1,
                 email: 'john.doe@example.com',
                 password: 'securepassword123'
             })
@@ -52,6 +54,8 @@ describe('AdminsController (e2e)', () => {
             .post('/api/admins')
             .send({
                 name: 'John Doe',
+                role: 1,
+                situation: 1,
                 email: 'john.doe@example.com',
                 password: 'securepassword123'
             })
@@ -67,6 +71,8 @@ describe('AdminsController (e2e)', () => {
 
         expect(response.body).toHaveProperty('id', createdAdminId);
         expect(response.body).toHaveProperty('name', 'John Doe');
+        expect(response.body).toHaveProperty('role', 1);
+        expect(response.body).toHaveProperty('situation', 1);
         expect(response.body).toHaveProperty('email', 'john.doe@example.com');
     });
 

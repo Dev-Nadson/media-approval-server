@@ -11,8 +11,13 @@ export async function up(knex: Knex): Promise<void> {
     table.text('caption');
     table.integer('status').defaultTo(0).notNullable();
     table.text('status_feedback');
-    table.timestamp('resolved_at');
     table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
+    table.timestamp('concluded_at');
+
+    table.index('session_id');
+    table.index(['id', 'created_at']);
+    table.index(['session_id', 'status']);
+    table.index(['drive_file_id', 'concluded_at']);
   });
 }
 

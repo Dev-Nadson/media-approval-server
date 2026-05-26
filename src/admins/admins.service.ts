@@ -5,7 +5,7 @@ import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { IdParamDto } from '@/common/dtos/id-param.dto';
 import { GetAdminDto } from './dtos/get-admin.dto';
-import { ListAdminsDto, PaginatedAdminsDto } from './dtos/list-admins.dto';
+import { ListAdminsQueryDto, PaginatedAdminsDto } from './dtos/list-admins.dto';
 
 @Injectable()
 export class AdminsService {
@@ -14,13 +14,13 @@ export class AdminsService {
         private readonly knex: KnexService,
     ) { }
 
-    public async listAdmins({ limit = 10, page = 1 }: ListAdminsDto): Promise<PaginatedAdminsDto> {
+    public async listAdmins({ limit = 10, page = 1 }: ListAdminsQueryDto): Promise<PaginatedAdminsDto> {
         const offset = (page - 1) * limit;
 
         const [admins, count_result] = await Promise.all([
             this.knex
                 .conn('admins as a')
-                .select('a.id', 'a.name', 'a.email')
+                .select('a.id', 'a.name', 'a.email', 'a.situation')
                 .whereNull('deleted_at')
                 .orderBy('created_at')
                 .limit(limit)
@@ -49,7 +49,7 @@ export class AdminsService {
     public async getAdmin({ id }: IdParamDto): Promise<GetAdminDto> {
         const admin = await this.knex
             .conn('admins as a')
-            .select('a.id', 'a.name', 'a.email', 'a.created_at')
+            .select('a.id', 'a.name', 'a.email', 'a.role', 'a.situation', 'a.created_at')
             .where('id', id)
             .whereNull('deleted_at')
             .first();
@@ -76,6 +76,8 @@ export class AdminsService {
             .insert({
                 id: this.utils.create_id(),
                 name: data.name,
+                role: data.role,
+                situation: data.situation,
                 email: data.email,
                 password: this.utils.hash_password(data.password),
             })
@@ -108,6 +110,8 @@ export class AdminsService {
             .conn('admins')
             .update({
                 name: data.name,
+                role: data.role,
+                situation: data.situation,
                 email: data.email,
                 password: this.utils.hash_password(data.password),
                 updated_at: new Date(),

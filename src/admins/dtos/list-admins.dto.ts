@@ -1,9 +1,14 @@
 import { PaginationMetaDto, PaginationQueryDto } from '@/common/dtos/pagination.dto';
-import { GetAdminDto } from './get-admin.dto';
 
-export class ListAdminsDto extends PaginationQueryDto { }
+export class ListAdminsQueryDto extends PaginationQueryDto { }
 
+class ListAdminsDto {
+    id: string;
+    name: string;
+    email: string;
+    situation: number;
+}
 export class PaginatedAdminsDto {
-    data: GetAdminDto[];
+    data: ListAdminsDto[];
     meta: PaginationMetaDto;
 }

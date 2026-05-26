@@ -10,6 +10,10 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamp('expires_at').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
     table.timestamp('deleted_at');
+
+    table.index('id');
+    table.index('code');
+    table.index(['client_email', 'deleted_at']);
   });
 }
 

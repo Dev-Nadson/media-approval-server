@@ -12,14 +12,14 @@ import { AdminsService } from './admins.service';
 import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { IdParamDto } from '@/common/dtos/id-param.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
-import { ListAdminsDto } from './dtos/list-admins.dto';
+import { ListAdminsQueryDto } from './dtos/list-admins.dto';
 
 @Controller('admins')
 export class AdminsController {
     constructor(private readonly adminsService: AdminsService) { }
 
     @Get()
-    listAdmins(@Query() query: ListAdminsDto) {
+    listAdmins(@Query() query: ListAdminsQueryDto) {
         return this.adminsService.listAdmins(query);
     }
 
