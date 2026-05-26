@@ -5,6 +5,7 @@ import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { IdParamDto } from '@/common/dtos/id-param.dto';
 import { GetAdminDto } from './dtos/get-admin.dto';
+import { ListAdminsDto, PaginatedAdminsDto } from './dtos/list-admins.dto';
 
 @Injectable()
 export class AdminsService {
@@ -13,14 +14,36 @@ export class AdminsService {
         private readonly knex: KnexService,
     ) { }
 
-    public async listAdmins(): Promise<GetAdminDto[]> {
-        const admins = await this.knex
-            .conn('admins as a')
-            .select('a.id', 'a.name', 'a.email')
-            .whereNull('deleted_at')
-            .orderBy('created_at');
+    public async listAdmins({ limit = 10, page = 1 }: ListAdminsDto): Promise<PaginatedAdminsDto> {
+        const offset = (page - 1) * limit;
 
-        return admins;
+        const [admins, count_result] = await Promise.all([
+            this.knex
+                .conn('admins as a')
+                .select('a.id', 'a.name', 'a.email')
+                .whereNull('deleted_at')
+                .orderBy('created_at')
+                .limit(limit)
+                .offset(offset),
+            this.knex
+                .conn('admins as a')
+                .whereNull('a.deleted_at')
+                .count('a.id as count')
+                .first()
+        ]);
+
+        const total = Number(count_result?.count ?? 0);
+        const last_page = Math.ceil(total / limit);
+
+        return {
+            data: admins,
+            meta: {
+                total,
+                page,
+                limit,
+                last_page,
+            },
+        };
     }
 
     public async getAdmin({ id }: IdParamDto): Promise<GetAdminDto> {

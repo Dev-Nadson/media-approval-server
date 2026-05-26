@@ -20,7 +20,7 @@ export async function bootstrapTestApp(): Promise<TestAppSetup> {
 
   const app = moduleFixture.createNestApplication();
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.init();
 
   const knexService = moduleFixture.get<KnexService>(KnexService);

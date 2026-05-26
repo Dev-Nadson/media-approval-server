@@ -6,19 +6,21 @@ import {
     Param,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { IdParamDto } from '@/common/dtos/id-param.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
+import { ListAdminsDto } from './dtos/list-admins.dto';
 
 @Controller('admins')
 export class AdminsController {
     constructor(private readonly adminsService: AdminsService) { }
 
     @Get()
-    listAdmins() {
-        return this.adminsService.listAdmins();
+    listAdmins(@Query() query: ListAdminsDto) {
+        return this.adminsService.listAdmins(query);
     }
 
     @Get(':id')

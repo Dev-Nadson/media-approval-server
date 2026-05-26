@@ -21,7 +21,15 @@ describe('AdminsController (e2e)', () => {
         return request(app.getHttpServer())
             .get('/api/admins')
             .expect(200)
-            .expect([]);
+            .expect({
+                data: [],
+                meta: {
+                    total: 0,
+                    page: 1,
+                    limit: 10,
+                    last_page: 0
+                }
+            });
     });
 
     it('/api/admins (POST) - Should create a new admin', async () => {
@@ -60,6 +68,45 @@ describe('AdminsController (e2e)', () => {
         expect(response.body).toHaveProperty('id', createdAdminId);
         expect(response.body).toHaveProperty('name', 'John Doe');
         expect(response.body).toHaveProperty('email', 'john.doe@example.com');
+    });
+
+    it('/api/admins (GET) - Should return paginated response with 1 admin', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/api/admins')
+            .expect(200);
+
+        expect(response.body).toHaveProperty('data');
+        expect(response.body.data).toHaveLength(1);
+        expect(response.body.data[0]).toHaveProperty('id', createdAdminId);
+        expect(response.body).toHaveProperty('meta', {
+            total: 1,
+            page: 1,
+            limit: 10,
+            last_page: 1
+        });
+    });
+
+    it('/api/admins (GET) - Should respect pagination query parameters', async () => {
+        const response = await request(app.getHttpServer())
+            .get('/api/admins?limit=5&page=1')
+            .expect(200);
+
+        expect(response.body.meta).toEqual({
+            total: 1,
+            page: 1,
+            limit: 5,
+            last_page: 1
+        });
+    });
+
+    it('/api/admins (GET) - Should validate incorrect query parameters', async () => {
+        await request(app.getHttpServer())
+            .get('/api/admins?limit=invalid')
+            .expect(400);
+
+        await request(app.getHttpServer())
+            .get('/api/admins?page=-1')
+            .expect(400);
     });
 
     it('/api/admins/:id (GET) - Should return 404 when admin not found', async () => {
