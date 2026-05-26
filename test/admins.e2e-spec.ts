@@ -64,7 +64,7 @@ describe('AdminsController (e2e)', () => {
 
     it('/api/admins/:id (GET) - Should return 404 when admin not found', async () => {
         const response = await request(app.getHttpServer())
-            .get(`/api/admins/111122223333444455556666`)
+            .get(`/api/admins/aaaabbbbccccddddeeeeffff`)
             .expect(404);
 
         expect(response.body).toHaveProperty('message', 'Admin not found');
@@ -85,7 +85,7 @@ describe('AdminsController (e2e)', () => {
 
     it('/api/admins/:id (PUT) - Should return 404 when admin not found', async () => {
         const response = await request(app.getHttpServer())
-            .put(`/api/admins/111122223333444455556666`)
+            .put(`/api/admins/aaaabbbbccccddddeeeeffff`)
             .send({
                 name: 'John Updated',
                 email: 'john.updated@example.com',
@@ -106,7 +106,7 @@ describe('AdminsController (e2e)', () => {
 
     it('/api/admins/:id (DELETE) - Should return 404 when admin not found', async () => {
         const response = await request(app.getHttpServer())
-            .delete(`/api/admins/111122223333444455556666`)
+            .delete(`/api/admins/aaaabbbbccccddddeeeeffff`)
             .expect(404);
 
         expect(response.body).toHaveProperty('message', 'Admin not found');
