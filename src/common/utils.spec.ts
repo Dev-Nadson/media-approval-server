@@ -26,6 +26,20 @@ describe('UtilsService (Unit Test)', () => {
         });
     });
 
+    describe('create_nano_id', () => {
+        it('should return a string with 8 characters (default Cuid2)', () => {
+            const id = service.create_nano_id();
+            expect(typeof id).toBe('string');
+            expect(id).toHaveLength(8);
+        });
+
+        it('should return different IDs in consecutive calls (uniqueness)', () => {
+            const id1 = service.create_nano_id();
+            const id2 = service.create_nano_id();
+            expect(id1).not.toBe(id2);
+        });
+    });
+
     describe('hash_password and compare_password', () => {
         const plainPassword = '12345678';
 

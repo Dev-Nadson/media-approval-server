@@ -3,6 +3,8 @@ import type { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('sessions', (table) => {
     table.string('id', 24).primary().notNullable();
+    table.string('url_id', 8).notNullable();
+    table.string('author_id', 24).references('id').inTable('admins').notNullable();
     table.string('code').notNullable();
     table.string('name').notNullable();
     table.string('client_email').notNullable();
