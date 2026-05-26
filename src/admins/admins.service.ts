@@ -1,6 +1,6 @@
 import { KnexService } from '@/database/knex.service';
 import { UtilsService } from '@/common/utils';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { IdParamDto } from '@/common/dtos/id-param.dto';
@@ -32,7 +32,7 @@ export class AdminsService {
             .first();
 
         if (!admin) {
-            throw new Error('Admin not found');
+            throw new NotFoundException('Admin not found');
         }
         return admin;
     }
@@ -45,7 +45,7 @@ export class AdminsService {
             .first();
 
         if (admin_already_exists) {
-            throw new Error('Admin already exists');
+            throw new ConflictException('Admin already exists');
         }
 
         const [inserted] = await this.knex
@@ -74,11 +74,11 @@ export class AdminsService {
         ]);
 
         if (!admin_exists) {
-            throw new Error('Admin not found');
+            throw new NotFoundException('Admin not found');
         }
 
         if (email_exists) {
-            throw new Error('Admin already exists');
+            throw new ConflictException('Admin already exists');
         }
 
         const [updated] = await this.knex
@@ -104,7 +104,7 @@ export class AdminsService {
             .first();
 
         if (!admin_exists) {
-            throw new Error('Admin not found');
+            throw new NotFoundException('Admin not found');
         }
 
         const [deleted] = await this.knex
