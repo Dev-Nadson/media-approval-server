@@ -34,6 +34,10 @@ class EnvSchema {
   @IsNotEmpty()
   @IsString()
   DATABASE_URL!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  TEST_DATABASE_URL!: string;
 }
 
 function parseEnv() {

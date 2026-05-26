@@ -15,8 +15,8 @@ export class AdminsService {
 
     public async listAdmins(): Promise<GetAdminDto[]> {
         const admins = await this.knex
-            .conn('admins')
-            .select('a.id', 'a.name', 'a.email', 'a.created_at')
+            .conn('admins as a')
+            .select('a.id', 'a.name', 'a.email')
             .whereNull('deleted_at')
             .orderBy('created_at');
 
@@ -25,7 +25,7 @@ export class AdminsService {
 
     public async getAdmin({ id }: IdParamDto): Promise<GetAdminDto> {
         const admin = await this.knex
-            .conn('admins' as 'a')
+            .conn('admins as a')
             .select('a.id', 'a.name', 'a.email', 'a.created_at')
             .where('id', id)
             .whereNull('deleted_at')
@@ -48,7 +48,7 @@ export class AdminsService {
             throw new Error('Admin already exists');
         }
 
-        const admin: string = await this.knex
+        const [inserted] = await this.knex
             .conn('admins')
             .insert({
                 id: this.utils.create_id(),
@@ -58,7 +58,7 @@ export class AdminsService {
             })
             .returning('id');
 
-        return { id: admin };
+        return { id: inserted.id };
     }
 
     public async updateAdmin({ id }: IdParamDto, data: UpdateAdminDto): Promise<IdParamDto> {
@@ -81,7 +81,7 @@ export class AdminsService {
             throw new Error('Admin already exists');
         }
 
-        const admin: string = await this.knex
+        const [updated] = await this.knex
             .conn('admins')
             .update({
                 name: data.name,
@@ -93,7 +93,7 @@ export class AdminsService {
             .whereNull('deleted_at')
             .returning('id');
 
-        return { id: admin };
+        return { id: updated.id };
     }
 
     public async deleteAdmin({ id }: IdParamDto): Promise<IdParamDto> {
@@ -107,13 +107,13 @@ export class AdminsService {
             throw new Error('Admin not found');
         }
 
-        const admin: string = await this.knex
+        const [deleted] = await this.knex
             .conn('admins')
             .update({ deleted_at: new Date() })
             .where('id', id)
             .whereNull('deleted_at')
             .returning('id');
 
-        return { id: admin };
+        return { id: deleted.id };
     }
 }

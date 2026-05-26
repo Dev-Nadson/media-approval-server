@@ -22,8 +22,8 @@ export class AdminsController {
     }
 
     @Get(':id')
-    getAdmin(@Param('id') id: IdParamDto) {
-        return this.adminsService.getAdmin(id);
+    getAdmin(@Param() params: IdParamDto) {
+        return this.adminsService.getAdmin(params);
     }
 
     @Post()
@@ -33,14 +33,14 @@ export class AdminsController {
 
     @Put(':id')
     updateAdmin(
-        @Param('id') id: IdParamDto,
+        @Param() params: IdParamDto,
         @Body() data: UpdateAdminDto
     ) {
-        return this.adminsService.updateAdmin(id, data);
+        return this.adminsService.updateAdmin(params, data);
     }
 
     @Delete(':id')
-    deleteAdmin(@Param('id') id: IdParamDto) {
-        return this.adminsService.deleteAdmin(id);
+    deleteAdmin(@Param() params: IdParamDto) {
+        return this.adminsService.deleteAdmin(params);
     }
 }

@@ -11,5 +11,15 @@ services:
     volumes:
       - "media_database_data:/bitnami/postgresql"
 
+  postgres-test:
+    container_name: "media_postgres_test"
+    image: "bitnami/postgresql:latest"
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres_test
+      POSTGRES_PASSWORD: docker_test
+      POSTGRES_DB: media_approval_test
+
 volumes:
   media_database_data:
