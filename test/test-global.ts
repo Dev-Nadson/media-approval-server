@@ -24,6 +24,7 @@ export async function bootstrapTestApp(): Promise<TestAppSetup> {
   await app.init();
 
   const knexService = moduleFixture.get<KnexService>(KnexService);
+  await knexService.conn.migrate.rollback();
   await knexService.conn.migrate.latest();
 
   return { app, knexService };
