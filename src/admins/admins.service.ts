@@ -120,22 +120,16 @@ export class AdminsService {
     }
 
     public async deleteAdmin({ id }: IdParamDto): Promise<IdParamDto> {
-        const admin_exists = await this.knex
-            .conn('admins')
-            .where('id', id)
-            .whereNull('deleted_at')
-            .first();
-
-        if (!admin_exists) {
-            throw new NotFoundException('Admin not found');
-        }
-
         const [deleted] = await this.knex
             .conn('admins')
             .update({ deleted_at: new Date() })
             .where('id', id)
             .whereNull('deleted_at')
             .returning('id');
+
+        if (!deleted) {
+            throw new NotFoundException('Admin not found');
+        }
 
         return { id: deleted.id };
     }
