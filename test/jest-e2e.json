@@ -10,6 +10,6 @@
     "^@/(.*)$": "<rootDir>/../src/$1"
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!(@paralleldrive/cuid2|@noble)/)"
+    "/node_modules/(?!(@paralleldrive/cuid2|@noble|nanoid)/)"
   ]
 }
