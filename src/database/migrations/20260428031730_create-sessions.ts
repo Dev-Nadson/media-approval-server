@@ -5,8 +5,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string('id', 24).primary().notNullable();
     table.string('url_id', 8).notNullable();
     table.string('author_id', 24).references('id').inTable('admins').notNullable();
-    table.string('code').notNullable();
-    table.string('name').notNullable();
+    table.string('title').notNullable();
+    table.string('description')
     table.string('client_email').notNullable();
     table.string('password_hash').notNullable();
     table.timestamp('expires_at').notNullable();
@@ -14,7 +14,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamp('deleted_at');
 
     table.index('id');
-    table.index('code');
+    table.index('url_id');
     table.index(['client_email', 'deleted_at']);
   });
 }
