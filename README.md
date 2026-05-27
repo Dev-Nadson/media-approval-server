@@ -2,107 +2,203 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# 🎥 Media Approval Server
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+O **Media Approval Server** é um backend robusto, modular e de alto desempenho construído com o framework [NestJS](https://nestjs.com/). Ele fornece uma plataforma completa de APIs para gerenciar fluxos de aprovação de mídias entre administradores e clientes externos, utilizando **PostgreSQL** para persistência estruturada de dados e **Knex.js** como Query Builder e mecanismo de controle de migrações.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Stack Tecnológica
 
-## Project setup
+* **Core Framework**: [NestJS](https://nestjs.com/) (v11+)
+* **Linguagem**: [TypeScript](https://www.typescriptlang.org/) (v5+)
+* **Banco de Dados**: [PostgreSQL](https://www.postgresql.org/) (v16+)
+* **Query Builder & Migrations**: [Knex.js](https://knexjs.org/)
+* **Geração de IDs**: [CUID2](https://github.com/paralleldrive/cuid2) & [NanoID](https://github.com/ai/nanoid)
+* **Validação de Dados**: [class-validator](https://github.com/typestack/class-validator) & [class-transformer](https://github.com/typestack/class-transformer)
+* **Testes Automatizados**: [Jest](https://jestjs.io/) & [Supertest](https://github.com/ladjs/supertest)
 
-```bash
-$ npm install
+---
+
+## 🏗️ Arquitetura do Sistema e Fluxo
+
+O servidor segue uma arquitetura modular que separa logicamente cada domínio da aplicação. Abaixo está o fluxo de interação entre os componentes:
+
+```mermaid
+graph TD
+    Client[Cliente / Administrador] -->|Requisição HTTP| Router[NestJS Router & Validation Pipe]
+    
+    subgraph NestJS [Camada do Servidor]
+        Router --> Guard[AuthGuard / Validação JWT]
+        Guard --> Controllers[Controllers: Admins / Sessions / Media]
+        Controllers --> Services[Services: Regras de Negócio]
+        Services --> DB_Service[KnexService / Integração Banco]
+    end
+    
+    subgraph Database [Camada de Persistência]
+        DB_Service -->|Queries SQL| PG[(PostgreSQL)]
+    end
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 💾 Modelagem do Banco de Dados (ERD)
 
-# watch mode
-$ npm run start:dev
+A modelagem de dados foi desenhada para suportar relacionamentos consistentes, auditoria e segurança. O diagrama entidade-relacionamento abaixo ilustra as tabelas controladas pelo Knex:
 
-# production mode
-$ npm run start:prod
+```mermaid
+erDiagram
+    ADMINS {
+        string id PK "cuid2 (24 chars)"
+        string name "Nome do administrador"
+        integer role "Nível de permissão"
+        string email "E-mail único"
+        string password "Senha hasheada (bcrypt)"
+        integer situation "Status da conta (Ativa/Inativa)"
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    SESSIONS {
+        string id PK "cuid2 (24 chars)"
+        string url_id UK "nanoid (8 chars) para URLs amigáveis"
+        string author_id FK "Chave estrangeira -> ADMINS(id)"
+        string title "Título da sessão de aprovação"
+        string description "Descrição da sessão"
+        string client_email "E-mail do cliente revisor"
+        string password_hash "Senha de acesso do cliente"
+        timestamp expires_at "Data de expiração da sessão"
+        timestamp created_at
+        timestamp deleted_at
+    }
+
+    MEDIA {
+        string id PK "cuid2 (24 chars)"
+        string session_id FK "Chave estrangeira -> SESSIONS(id)"
+        string drive_file_id "ID do arquivo no Google Drive/S3"
+        string drive_url "Link direto para visualização da mídia"
+        string mime_type "Tipo de arquivo (vídeo, áudio, imagem)"
+        string title "Nome/Título da mídia"
+        text caption "Legendas ou comentários do administrador"
+        integer status "Status de aprovação (Pendente/Aprovada/Rejeitada)"
+        text status_feedback "Feedback fornecido pelo cliente"
+        timestamp created_at
+        timestamp concluded_at "Data em que foi aprovado/rejeitado"
+    }
+
+    AUDIT_LOG {
+        string id PK "cuid2 (24 chars)"
+        string session_id FK "Chave estrangeira -> SESSIONS(id)"
+        string media_id FK "Chave estrangeira -> MEDIA(id)"
+        string actor "Quem realizou a ação (admin ou cliente)"
+        string action "Ação realizada (ex: aprovou_midia)"
+        json metadata "Metadados adicionais da ação"
+        timestamp created_at
+    }
+
+    ADMINS ||--o{ SESSIONS : "cria"
+    SESSIONS ||--o{ MEDIA : "contém"
+    SESSIONS ||--o{ AUDIT_LOG : "registra ações de"
+    MEDIA ||--o{ AUDIT_LOG : "registra status de"
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+## ⚙️ Configuração do Ambiente (`.env`)
 
-# e2e tests
-$ npm run test:e2e
+Crie ou atualize o arquivo `.env` na raiz do projeto com base no seguinte modelo de variáveis:
 
-# test coverage
-$ npm run test:cov
+```env
+NODE_ENV="development"
+PORT=3000
+BCRYPT_ROUNDS=10
+JWT_SECRET="secret_super_secure_key"
+
+# Conexão de Banco de Dados Local (Desenvolvimento)
+DATABASE_URL="postgresql://postgres:docker@localhost:5432/media_approval"
+
+# Conexão de Banco de Dados de Testes
+TEST_DATABASE_URL="postgresql://postgres_test:docker_test@localhost:5433/media_approval_test"
 ```
 
-## DTO
+---
+
+## 🚀 Instalação e Execução
+
+### 1. Inicializar os Contêineres de Banco de Dados (Docker)
+Este projeto possui um arquivo `docker-compose.yaml` com duas instâncias dedicadas do PostgreSQL (uma para desenvolvimento na porta `5432` e outra para testes na porta `5433`):
 
 ```bash
-Documentação (@ApiProperty)
-Transformação (@Type)
-Validação Básica (@IsNotEmpty/@IsOptional)
-Tipo (@IsEnum)
-Restrições (@IsPositive)
+docker compose up -d
 ```
 
-## Deployment
+### 2. Instalar as Dependências do Projeto
+```bash
+npm install
+```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### 3. Rodar as Migrações do Banco de Dados
+Para estruturar as tabelas no seu banco local de desenvolvimento:
+```bash
+npm run migrate:latest
+```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+*(Opcional) Outros comandos do Knex disponíveis:*
+* `npm run migrate:list`: Lista as migrações e o status de cada uma.
+* `npm run migrate:rollback`: Desfaz a última bateria de migrações executadas.
+* `npm run migrate:down`: Desfaz uma migração específica de forma sequencial.
+
+### 4. Executar o Servidor
+```bash
+# Modo de desenvolvimento (com hot-reload ao salvar arquivos)
+npm run start:dev
+
+# Modo de produção (build e start da versão compilada)
+npm run build
+npm run start:prod
+```
+
+---
+
+## 🧪 Estrutura de Testes Automatizados
+
+Garantimos a estabilidade da aplicação através de uma sólida suíte de testes unitários e de integração (E2E), configurada com Jest.
+
+### Testes Unitários
+Testam funções utilitárias, validadores customizados e regras de negócio isoladas de serviços.
+```bash
+# Executar todos os testes unitários
+npm run test
+
+# Executar testes unitários com acompanhamento em tempo real (watch mode)
+npm run test:watch
+```
+
+### Testes de Integração / E2E (Ponta a Ponta)
+Testam as rotas HTTP reais da aplicação. Utiliza o `supertest` para disparar chamadas contra um servidor de teste conectado à base de testes isolada (`media_approval_test`).
+
+Antes de rodar cada bateria de testes E2E, o arquivo [test-global.ts](file:///c:/Users/PC/Desktop/media-approval-server/test/test-global.ts) executa automaticamente o rollback e roda todas as migrações na base de teste de forma limpa.
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Executar os testes das rotas (E2E)
+npm run test:e2e
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## ⚠️ Troubleshooting e Gotchas Comuns
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+> [!TIP]
+> ### Suporte a dependências ESM no Jest (Ex: `nanoid` e `cuid2`)
+>
+> Bibliotecas modernas como `nanoid` e `@paralleldrive/cuid2` são publicadas puramente em formato **ES Modules (ESM)**. Por padrão, o ambiente Node/CommonJS do Jest ignora a pasta `node_modules` durante a compilação, o que causa erros de inicialização de teste (`SyntaxError: Cannot use import statement outside a module`).
+>
+> **Solução Aplicada:**
+> Para resolver isso, tanto o arquivo principal de configuração do Jest no `package.json` quanto o [test/jest-e2e.json](file:///c:/Users/PC/Desktop/media-approval-server/test/jest-e2e.json) estão configurados para instruir o `ts-jest` a transpilar esses pacotes de forma explícita na propriedade `transformIgnorePatterns`:
+>
+> ```json
+> "transformIgnorePatterns": [
+>   "/node_modules/(?!(@paralleldrive/cuid2|@noble|nanoid)/)"
+> ]
+> ```
