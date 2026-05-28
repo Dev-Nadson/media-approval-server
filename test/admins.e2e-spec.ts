@@ -80,7 +80,6 @@ describe('AdminsController (e2e)', () => {
             .expect(200);
 
         expect(response.body).toHaveProperty('data');
-        // erro ao puxar o usuário recem criado
         expect(response.body.data).toHaveLength(1);
         expect(response.body.data[0]).toHaveProperty('id', createdAdminId);
         expect(response.body).toHaveProperty('meta', {
