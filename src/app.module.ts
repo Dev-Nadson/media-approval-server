@@ -7,9 +7,11 @@ import Keyv from 'keyv';
 import { KeyvCacheableMemory } from 'cacheable';
 import { env } from './common/env.config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { KnexModule } from '@/database/knex.module';
 
 @Module({
   imports: [
+    KnexModule,
     AdminsModule,
     SessionsModule,
     EventEmitterModule.forRoot(),

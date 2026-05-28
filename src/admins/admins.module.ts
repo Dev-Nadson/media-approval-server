@@ -8,6 +8,6 @@ import { AdminsCacheListener } from './admins-cache.listener';
 @Module({
     imports: [],
     controllers: [AdminsController],
-    providers: [AdminsService, AdminsCacheListener, UtilsService, KnexService],
+    providers: [AdminsService, AdminsCacheListener, UtilsService],
 })
 export class AdminsModule { }
