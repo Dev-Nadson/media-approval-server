@@ -97,7 +97,8 @@ export class AdminsService {
                 role: data.role,
                 situation: data.situation,
                 email: data.email,
-                password: this.utils.hash_password(data.password),
+                // todo: validar para ele fazer esse hash apenas quando a senha existir
+                password: await this.utils.hash_password(data.password),
             })
             .returning('id');
 
@@ -127,7 +128,7 @@ export class AdminsService {
                 role: data.role,
                 situation: data.situation,
                 email: data.email,
-                password: this.utils.hash_password(data.password),
+                password: await this.utils.hash_password(data.password),
                 updated_at: new Date(),
             })
             .where('id', id)
