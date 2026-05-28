@@ -24,7 +24,7 @@ export class AdminsService {
         const cacheKey = CACHE_KEYS.ADMINS_LIST(page, limit);
 
         const cached = await this.cacheManager.get<PaginatedAdminsDto>(cacheKey);
-        if (cached) return cached;
+        if (cached) { return cached; }
 
         const offset = (page - 1) * limit;
 
@@ -57,7 +57,6 @@ export class AdminsService {
         };
 
         await this.cacheManager.set(cacheKey, result, CACHE_TTL.FIVE_MINUTES);
-
         return result;
     }
 
@@ -74,12 +73,9 @@ export class AdminsService {
             .whereNull('deleted_at')
             .first();
 
-        if (!admin) {
-            throw new NotFoundException('Admin not found');
-        }
+        if (!admin) { throw new NotFoundException('Admin not found'); }
 
         await this.cacheManager.set(cacheKey, admin, CACHE_TTL.FIVE_MINUTES);
-
         return admin;
     }
 
@@ -90,9 +86,7 @@ export class AdminsService {
             .whereNull('deleted_at')
             .first();
 
-        if (admin_already_exists) {
-            throw new ConflictException('Admin already exists');
-        }
+        if (admin_already_exists) { throw new ConflictException('Admin already exists'); }
 
         const [inserted] = await this.knex
             .conn('admins')
@@ -106,8 +100,7 @@ export class AdminsService {
             })
             .returning('id');
 
-        this.eventEmitter.emit('admins.mutated');
-
+        await this.eventEmitter.emitAsync('admins.mutated', { id: inserted.id });
         return { id: inserted.id };
     }
 
@@ -123,13 +116,8 @@ export class AdminsService {
                 .first(),
         ]);
 
-        if (!admin_exists) {
-            throw new NotFoundException('Admin not found');
-        }
-
-        if (email_exists) {
-            throw new ConflictException('Admin already exists');
-        }
+        if (!admin_exists) { throw new NotFoundException('Admin not found'); }
+        if (email_exists) { throw new ConflictException('Admin already exists'); }
 
         const [updated] = await this.knex
             .conn('admins')
@@ -145,8 +133,7 @@ export class AdminsService {
             .whereNull('deleted_at')
             .returning('id');
 
-        this.eventEmitter.emit('admins.mutated', { id });
-
+        await this.eventEmitter.emitAsync('admins.mutated', { id });
         return { id: updated.id };
     }
 
@@ -162,8 +149,7 @@ export class AdminsService {
             throw new NotFoundException('Admin not found');
         }
 
-        this.eventEmitter.emit('admins.mutated', { id });
-
+        await this.eventEmitter.emitAsync('admins.mutated', { id });
         return { id: deleted.id };
     }
 }

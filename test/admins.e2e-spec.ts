@@ -13,8 +13,6 @@ describe('AdminsController (e2e)', () => {
         const setup = await bootstrapTestApp();
         app = setup.app;
         knexService = setup.knexService;
-
-        await knexService.conn('admins').truncate();
     });
 
     it('/api/admins (GET) - Should return empty array initially', () => {
@@ -82,6 +80,7 @@ describe('AdminsController (e2e)', () => {
             .expect(200);
 
         expect(response.body).toHaveProperty('data');
+        // erro ao puxar o usuário recem criado
         expect(response.body.data).toHaveLength(1);
         expect(response.body.data[0]).toHaveProperty('id', createdAdminId);
         expect(response.body).toHaveProperty('meta', {
