@@ -21,5 +21,16 @@ services:
       POSTGRES_PASSWORD: docker_test
       POSTGRES_DB: media_approval_test
 
+  redis:
+    container_name: media_redis
+    image: bitnami/redis:latest
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=docker
+    volumes:
+      - media_redis_data:/data
+
 volumes:
   media_database_data:
+  media_redis_data:

@@ -1,6 +1,6 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsPositive, Length, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Roles, Situation } from '@/common/enums/constants';
+import { Roles, Situation } from '@/common/enums';
 import { Type } from 'class-transformer';
 
 export class CreateAdminDto {

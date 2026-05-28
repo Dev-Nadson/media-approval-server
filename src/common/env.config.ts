@@ -33,6 +33,10 @@ class EnvSchema {
 
   @IsNotEmpty()
   @IsString()
+  REDIS_URL!: string;
+
+  @IsNotEmpty()
+  @IsString()
   DATABASE_URL!: string;
 
   @IsNotEmpty()

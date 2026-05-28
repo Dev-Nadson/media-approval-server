@@ -7,6 +7,7 @@ describe('EnvConfig (Unit Test)', () => {
         expect(env.PORT).toBeDefined();
         expect(env.BCRYPT_ROUNDS).toBeDefined();
         expect(env.JWT_SECRET).toBeDefined();
+        expect(env.REDIS_URL).toBeDefined();
         expect(env.DATABASE_URL).toBeDefined();
         expect(env.TEST_DATABASE_URL).toBeDefined();
     });

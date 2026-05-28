@@ -2,7 +2,7 @@ import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPositive, MinLength, Validat
 import { AtLeastOneOf } from '@/common/decorators/at-least-one.validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { Roles, Situation } from '@/common/enums/constants';
+import { Roles, Situation } from '@/common/enums';
 
 export class UpdateAdminDto {
   @AtLeastOneOf(['name', 'role', 'situation', 'email', 'password'])
