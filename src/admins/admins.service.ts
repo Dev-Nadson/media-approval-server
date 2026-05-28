@@ -21,7 +21,8 @@ export class AdminsService {
     ) { }
 
     public async listAdmins({ limit = 10, page = 1 }: ListAdminsQueryDto): Promise<PaginatedAdminsDto> {
-        const cacheKey = CACHE_KEYS.ADMINS_LIST(page, limit);
+        const version = await this.utils.get_cache_version(this.cacheManager, CACHE_KEYS.ADMINS_VERSION);
+        const cacheKey = CACHE_KEYS.ADMINS_LIST(version, page, limit);
 
         const cached = await this.cacheManager.get<PaginatedAdminsDto>(cacheKey);
         if (cached) { return cached; }

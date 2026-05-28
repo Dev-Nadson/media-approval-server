@@ -6,9 +6,8 @@ export const CACHE_TTL = {
 } as const;
 
 export const CACHE_KEYS = {
-    ADMINS_LIST_PREFIX: 'admins:list:',
-    ADMINS_LIST: (page: number, limit: number) => `admins:list:page:${page}:limit:${limit}`,
+    ADMINS_VERSION: 'admins:version',
+    ADMINS_LIST: (version: string, page: number, limit: number) =>
+        `admins:v${version}:list:page:${page}:limit:${limit}`,
     ADMIN_GET: (id: string) => `admins:get:${id}`,
-    ADMIN_DELETE: (id: string) => `admins:delete:${id}`,
-    ADMIN_UPDATE: (id: string) => `admins:update:${id}`,
 } as const;

@@ -65,4 +65,36 @@ describe('UtilsService (Unit Test)', () => {
             expect(isMatch).toBe(false);
         });
     });
+
+    describe('create_cache_version', () => {
+        it('should return a string with 8 characters (default Cuid2)', () => {
+            const id = service.create_cache_version();
+            expect(typeof id).toBe('string');
+            expect(id).toHaveLength(8);
+        });
+
+        it('should return different IDs in consecutive calls (uniqueness)', () => {
+            const id1 = service.create_cache_version();
+            const id2 = service.create_cache_version();
+            expect(id1).not.toBe(id2);
+        });
+    });
+
+    describe('get_cache_version', () => {
+        it('should return the cached version if it exists', async () => {
+            const cache = {
+                get: jest.fn().mockResolvedValue('bv9kxspk'),
+            };
+            const version = await service.get_cache_version(cache, 'test');
+            expect(version).toBe('bv9kxspk');
+        });
+
+        it('should return "initial" if the cached version does not exist', async () => {
+            const cache = {
+                get: jest.fn().mockResolvedValue(undefined),
+            };
+            const version = await service.get_cache_version(cache, 'test');
+            expect(version).toBe('initial');
+        });
+    });
 });
