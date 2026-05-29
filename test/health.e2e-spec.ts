@@ -18,6 +18,7 @@ describe('HealthController (e2e)', () => {
     cacheManager = setup.cacheManager;
   })
 
+  // TODO: Implementar o teste de health
   it('/api/health (GET) - Should return the services status', () => {
     return request(app.getHttpServer())
       .get('/api/health')
