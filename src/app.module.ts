@@ -8,10 +8,12 @@ import { KeyvCacheableMemory } from 'cacheable';
 import { env } from './common/env.config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { KnexModule } from '@/database/knex.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     KnexModule,
+    HealthModule,
     AdminsModule,
     SessionsModule,
     EventEmitterModule.forRoot(),
